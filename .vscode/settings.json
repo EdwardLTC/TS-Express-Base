@@ -1,0 +1,9 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnSave": false,
+  "openapi.tryit.insecureSslHostnames": [
+    "api.server.test"
+  ]
+}

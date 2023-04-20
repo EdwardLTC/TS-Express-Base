@@ -1,0 +1,359 @@
+tags:
+  - name: users
+    description: users API
+  - name: products
+    description: products API
+  - name: events
+    description: events API
+paths:
+  # [GET] users
+  /users:
+    get:
+      tags:
+        - users
+      summary: Find All Users
+      responses:
+        200:
+          description: "OK"
+        500:
+          description: "Server Error"
+
+    # [POST] users
+    post:
+      tags:
+        - users
+      summary: Add User
+      parameters:
+        - name: body
+          in: body
+          description: user Data
+          required: true
+          schema:
+            $ref: "#/definitions/users"
+      responses:
+        201:
+          description: "Created"
+        400:
+          description: "Bad Request"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+
+  # [GET] users/id
+  /users/{id}:
+    get:
+      tags:
+        - users
+      summary: Find User By Id
+      parameters:
+        - name: id
+          in: path
+          description: User Id
+          required: true
+      responses:
+        200:
+          description: "OK"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+
+    # [PUT] users/id
+    put:
+      tags:
+        - users
+      summary: Update User By Id
+      parameters:
+        - name: id
+          in: path
+          description: user Id
+          required: true
+        - name: body
+          in: body
+          description: user Data
+          required: true
+          schema:
+            $ref: "#/definitions/users"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Bad Request"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+
+    # [DELETE] users/id
+    delete:
+      tags:
+        - users
+      summary: Delete User By Id
+      parameters:
+        - name: id
+          in: path
+          description: user Id
+          required: true
+      responses:
+        200:
+          description: "OK"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+
+  # [GET] products/all
+  /products/all:
+    get:
+      tags:
+        - products
+      summary: Find All Products
+      responses:
+        200:
+          description: "OK"
+        500:
+          description: "Server Error"
+
+  # [GET] product
+  /products:
+    get:
+      tags:
+        - products
+      summary: Find product by id and price
+      parameters:
+        - name: id
+          in: query
+          description: product Id
+          required: true
+        - name: price
+          in: query
+          description: product Price
+          required: true
+      responses:
+        200:
+          description: "OK"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+    post:
+      tags:
+        - products
+      summary: Add Product
+      parameters:
+        - name: body
+          in: body
+          description: product Data
+          required: true
+          schema:
+            $ref: "#/definitions/product"
+      responses:
+        201:
+          description: "Created"
+        400:
+          description: "Bad Request"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+
+  # [GET] product/id
+  /products/{id}:
+    put:
+      tags:
+        - products
+      summary: Update Product By Id
+      parameters:
+        - name: id
+          in: path
+          description: product Id
+          required: true
+        - name: body
+          in: body
+          description: product Data
+          required: true
+          schema:
+            $ref: "#/definitions/product"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Bad Request"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+    delete:
+      tags:
+        - products
+      summary: Delete Product By Id
+      parameters:
+        - name: id
+          in: path
+          description: product Id
+          required: true
+      responses:
+        200:
+          description: "OK"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+    get:
+      tags:
+        - products
+      summary: Find Product By Id
+      parameters:
+        - name: id
+          in: path
+          description: Product Id
+          required: true
+      responses:
+        200:
+          description: "OK"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+
+  /events:
+    get:
+      tags:
+        - events
+      summary: serach Events
+      parameters:
+        - name: name
+          in: query
+          description: event name
+          required: true
+      responses:
+        200:
+          description: "OK"
+        500:
+          description: "Server Error"
+    post:
+      tags:
+        - events
+      summary: Add Event
+      parameters:
+        - name: body
+          in: body
+          description: event Data
+          required: true
+          schema:
+            $ref: "#/definitions/event"
+      responses:
+        201:
+          description: "Created"
+        400:
+          description: "Bad Request"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+
+  /events/{id}:
+    put:
+      tags:
+        - events
+      summary: Update Event By Id
+      parameters:
+        - name: id
+          in: path
+          description: event Id
+          required: true
+        - name: body
+          in: body
+          description: event Data
+          required: true
+          schema:
+            $ref: "#/definitions/event"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Bad Request"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+    delete:
+      tags:
+        - events
+      summary: Delete Event By Id
+      parameters:
+        - name: id
+          in: path
+          description: event Id
+          required: true
+      responses:
+        200:
+          description: "OK"
+        409:
+          description: "Conflict"
+        500:
+          description: "Server Error"
+          
+# definitions
+definitions:
+  users:
+    type: object
+    required: -email
+      -password
+      -name
+    properties:
+      email:
+        type: string
+        description: user Email
+      password:
+        type: string
+        description: user Password
+      name:
+        type: string
+        description: user Name
+  product:
+    type: object
+    required: -name
+      -price
+      -description
+      -image
+      -quantity
+    properties:
+      name:
+        type: string
+        description: product Name
+      price:
+        type: integer
+        description: product Price
+      description:
+        type: string
+        description: product Description
+      image:
+        type: string
+        description: product Image
+      quantity:
+        type: integer
+        description: product Quantity
+  event:
+    type: object
+    required: -name
+      -date
+      -place
+      -Department
+    properties:
+      name:
+        type: string
+        description: event Name
+      date:
+        type: string
+        description: event Date
+      place:
+        type: string
+        description: event Place
+      Department:
+        type: string
+        description: event Department
+schemes:
+  - https
+  - http
