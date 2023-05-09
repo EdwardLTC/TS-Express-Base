@@ -1,4 +1,4 @@
-import { HttpException } from '@/httpModals/httpException';
+import { HttpException } from '@/httpModals';
 import { NextFunction, Request, Response } from 'express';
 import multer from 'multer';
 

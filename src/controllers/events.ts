@@ -1,4 +1,4 @@
-import { HttpResponse } from '@/httpModals/httpResponse';
+import { HttpResponse } from '@/httpModals';
 import { Event } from '@/interfaces/event.interface';
 import { EventService } from '@/services/events';
 import { NextFunction, Request, Response } from 'express';

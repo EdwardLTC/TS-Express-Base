@@ -9,7 +9,7 @@ import { HtppError } from './httpError';
  * @exports HttpException
  */
 
-export class HttpException extends Error {
+export class HttpException {
   public error: boolean;
   public responseTimestamp: Date;
   public statusCode: number;
@@ -17,31 +17,30 @@ export class HttpException extends Error {
   public name: string;
 
   constructor(err: HtppError) {
-    super();
     let errName = 'InternalServerer';
     switch (err.statusCode) {
       case 409:
-        errName = 'ConflictEr';
+        errName = 'ConflictError';
         break;
       case 422:
-        errName = 'Validationer';
+        errName = 'ValidationError';
         break;
       case 401:
-        errName = 'Unauthorizeder';
+        errName = 'UnauthorizedError';
         break;
       case 403:
-        errName = 'Forbiddener';
+        errName = 'ForbiddenError';
         break;
       case 404:
-        errName = 'NotFounder';
+        errName = 'NotFoundError';
         break;
       case 400:
-        errName = 'BadRequster';
+        errName = 'BadRequestError';
         break;
       case 500:
-        errName = 'InternalServerer';
+        errName = 'InternalServerError';
       default:
-        errName = 'InternalServerer';
+        errName = 'InternalServerError';
     }
     this.error = true;
     this.responseTimestamp = new Date();

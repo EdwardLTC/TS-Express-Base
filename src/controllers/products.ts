@@ -1,4 +1,4 @@
-import { HttpResponse } from '@/httpModals/httpResponse';
+import { HttpResponse } from '@/httpModals';
 import { Product } from '@/interfaces/users.interface';
 import { ProductService } from '@/services/products';
 import { NextFunction, Request, Response } from 'express';

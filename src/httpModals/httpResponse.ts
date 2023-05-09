@@ -47,6 +47,9 @@ export class HttpResponse {
       });
     } else if (typeof data === 'object') {
       Object.keys(data).forEach(key => {
+        if (typeof data[key] === 'object') {
+          data[key] = this.filterData(data[key]);
+        }
         if (defaultExcludedItemsFromResponse.includes(key)) {
           delete data[key];
         }
