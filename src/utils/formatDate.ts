@@ -5,7 +5,6 @@
  * @param type
  * @returns type 1: dd-mm-yyyy type 2: hh:mm default: yyyy-mm-ddThh:mm
  */
-
 export const formatDate = (date: Date, type?: number) => {
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();

@@ -1,7 +1,6 @@
-import { hash } from 'bcrypt';
 import { Service } from 'typedi';
 import { HttpException, HttpResponse } from '@/httpModals';
-import { User } from '@interfaces/users.interface';
+import { User } from '@/interfaces/users';
 import { UserModel } from '@/models/users';
 
 @Service()
@@ -13,44 +12,39 @@ export class UserService {
       const users: User[] = await this.userModel.find();
       return new HttpResponse(users);
     } catch (error) {
-      throw new HttpException(error);
+      throw new HttpException({ statusCode: 500 });
     }
   }
 
-  public async findUserById(userId: string): Promise<HttpResponse> {
-    try {
-      const findUser: User = await this.userModel.findOne({ _id: userId });
-      return new HttpResponse(findUser);
-    } catch (error) {
-      throw new HttpException(error);
-    }
+  public async findUserByEmail(email: string, includePassword: Boolean = false): Promise<User> {
+    return includePassword ? await this.userModel.findOne({ email: email }).select('+password') : await this.userModel.findOne({ email: email });
   }
 
   public async createUser(userData: User): Promise<HttpResponse> {
     try {
-      const hashedPassword = await hash(userData.password, 10);
-      const createUserData: User = await this.userModel.create({ ...userData, password: hashedPassword });
+      const data = {
+        email: userData.email,
+        name: userData.name || '',
+        password: userData.password,
+        address: userData.address || '',
+        phone: userData.phone || '',
+        dob: userData.dob || new Date(),
+        avatar: userData.avatar || '',
+      };
+      const createUserData: User = await this.userModel.create(data);
       return new HttpResponse(createUserData);
     } catch (error) {
-      throw new HttpException(error);
+      throw new HttpException({ statusCode: 500 });
     }
   }
 
   public async updateUser(userId: string, userData: User): Promise<HttpResponse> {
     try {
-      const updateUserById: User = await this.userModel.findByIdAndUpdate(userId, { userData });
+      const updateUserById: User = await this.userModel.findByIdAndUpdate(userId, userData, { returnDocument: 'after' });
       return new HttpResponse(updateUserById);
     } catch (error) {
-      throw new HttpException(error);
-    }
-  }
-
-  public async deleteUser(userId: string): Promise<HttpResponse> {
-    try {
-      const deleteUserById: User = await this.userModel.findByIdAndDelete(userId);
-      return new HttpResponse(deleteUserById);
-    } catch (error) {
-      throw new HttpException(error);
+      console.log(error);
+      throw new HttpException({ statusCode: 500 });
     }
   }
 }

@@ -1,359 +1,279 @@
 tags:
+  - name: authentication
+    description: Authentication API
   - name: users
-    description: users API
-  - name: products
-    description: products API
-  - name: events
-    description: events API
+    description: Users API
+  - name: articles
+    description: Articles API
+  - name: media
+    description: Media API
+
 paths:
-  # [GET] users
+  #LOGIN
+  /auth/login:
+    post:
+      tags:
+        - authentication
+      summary: Login
+      description: Login
+      operationId: login
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Login
+          required: true
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                description: user Email
+              password:
+                type: string
+                description: user Password
+      responses:
+        "200":
+          description: Login
+          schema:
+            $ref: "#/definitions/authentication"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  #LOGOUT
+  /auth/logout:
+    get:
+      tags:
+        - authentication
+      summary: Logout
+      security:
+        - bearerAuth: []
+      description: Logout
+      operationId: logout
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Logout
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+
   /users:
+    # GET ALL USERS
     get:
       tags:
         - users
-      summary: Find All Users
+      summary: Get all users
+      security:
+        - bearerAuth: []
+      description: Get all users
+      operationId: getAllUsers
+      consumes:
+        - application/json
+      produces:
+        - application/json
       responses:
-        200:
-          description: "OK"
-        500:
-          description: "Server Error"
+        "200":
+          description: Get all users
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/users"
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
 
-    # [POST] users
+    # REGISTER
     post:
       tags:
         - users
-      summary: Add User
+      summary: Register
+      description: Register
+      operationId: register
+      consumes:
+        - application/json
+      produces:
+        - application/json
       parameters:
-        - name: body
-          in: body
-          description: user Data
+        - in: body
+          name: body
+          description: Register
           required: true
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                description: user Email
+              password:
+                type: string
+                description: user Password
+      responses:
+        "200":
+          description: Register
           schema:
             $ref: "#/definitions/users"
-      responses:
-        201:
-          description: "Created"
-        400:
-          description: "Bad Request"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
 
-  # [GET] users/id
-  /users/{id}:
-    get:
-      tags:
-        - users
-      summary: Find User By Id
-      parameters:
-        - name: id
-          in: path
-          description: User Id
-          required: true
-      responses:
-        200:
-          description: "OK"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
-
-    # [PUT] users/id
+    # UPDATE
     put:
       tags:
         - users
-      summary: Update User By Id
+      summary: Update
+      security:
+        - bearerAuth: []
+      description: Update
+      operationId: update
+      consumes:
+        - application/json
+      produces:
+        - application/json
       parameters:
-        - name: id
-          in: path
-          description: user Id
-          required: true
-        - name: body
-          in: body
-          description: user Data
+        - in: body
+          name: body
+          description: Update
           required: true
           schema:
+            type: object
             $ref: "#/definitions/users"
       responses:
-        200:
-          description: "OK"
-        400:
-          description: "Bad Request"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
+        "200":
+          description: Update
+          schema:
+            $ref: "#/definitions/users"
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
 
-    # [DELETE] users/id
-    delete:
+  # CHANGE PASSWORD
+  /users/change-password:
+    put:
       tags:
         - users
-      summary: Delete User By Id
+      summary: Change password
+      security:
+        - bearerAuth: []
+      description: Change password
+      operationId: Change password
+      consumes:
+        - application/json
+      produces:
+        - application/json
       parameters:
-        - name: id
-          in: path
-          description: user Id
-          required: true
+        in: body
+        name: body
+        description: Change password
+        required: true
+        schema:
+          type: object
+          required:
+            - password
+          properties:
+            password:
+              type: string
+              description: user New Password
       responses:
-        200:
-          description: "OK"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
-
-  # [GET] products/all
-  /products/all:
-    get:
-      tags:
-        - products
-      summary: Find All Products
-      responses:
-        200:
-          description: "OK"
-        500:
-          description: "Server Error"
-
-  # [GET] product
-  /products:
-    get:
-      tags:
-        - products
-      summary: Find product by id and price
-      parameters:
-        - name: id
-          in: query
-          description: product Id
-          required: true
-        - name: price
-          in: query
-          description: product Price
-          required: true
-      responses:
-        200:
-          description: "OK"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
-    post:
-      tags:
-        - products
-      summary: Add Product
-      parameters:
-        - name: body
-          in: body
-          description: product Data
-          required: true
+        "200":
+          description: Change password
           schema:
-            $ref: "#/definitions/product"
-      responses:
-        201:
-          description: "Created"
-        400:
-          description: "Bad Request"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
+            $ref: "#/definitions/users"
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
 
-  # [GET] product/id
-  /products/{id}:
-    put:
-      tags:
-        - products
-      summary: Update Product By Id
-      parameters:
-        - name: id
-          in: path
-          description: product Id
-          required: true
-        - name: body
-          in: body
-          description: product Data
-          required: true
-          schema:
-            $ref: "#/definitions/product"
-      responses:
-        200:
-          description: "OK"
-        400:
-          description: "Bad Request"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
-    delete:
-      tags:
-        - products
-      summary: Delete Product By Id
-      parameters:
-        - name: id
-          in: path
-          description: product Id
-          required: true
-      responses:
-        200:
-          description: "OK"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
-    get:
-      tags:
-        - products
-      summary: Find Product By Id
-      parameters:
-        - name: id
-          in: path
-          description: Product Id
-          required: true
-      responses:
-        200:
-          description: "OK"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
-
-  /events:
-    get:
-      tags:
-        - events
-      summary: serach Events
-      parameters:
-        - name: name
-          in: query
-          description: event name
-          required: true
-      responses:
-        200:
-          description: "OK"
-        500:
-          description: "Server Error"
-    post:
-      tags:
-        - events
-      summary: Add Event
-      parameters:
-        - name: body
-          in: body
-          description: event Data
-          required: true
-          schema:
-            $ref: "#/definitions/event"
-      responses:
-        201:
-          description: "Created"
-        400:
-          description: "Bad Request"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
-
-  /events/{id}:
-    put:
-      tags:
-        - events
-      summary: Update Event By Id
-      parameters:
-        - name: id
-          in: path
-          description: event Id
-          required: true
-        - name: body
-          in: body
-          description: event Data
-          required: true
-          schema:
-            $ref: "#/definitions/event"
-      responses:
-        200:
-          description: "OK"
-        400:
-          description: "Bad Request"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
-    delete:
-      tags:
-        - events
-      summary: Delete Event By Id
-      parameters:
-        - name: id
-          in: path
-          description: event Id
-          required: true
-      responses:
-        200:
-          description: "OK"
-        409:
-          description: "Conflict"
-        500:
-          description: "Server Error"
-          
-# definitions
+  
 definitions:
   users:
     type: object
     required: -email
-      -password
       -name
+      -address
+      -phone
+      -dob
+      -avatar
+      -id
     properties:
       email:
         type: string
         description: user Email
-      password:
-        type: string
-        description: user Password
       name:
         type: string
         description: user Name
-  product:
+      address:
+        type: string
+        description: user Address
+      phone:
+        type: string
+        description: user Phone number
+      dob:
+        type: string
+        description: user Date of Birth
+      avatar:
+        type: string
+        description: user Avatar
+      id:
+        type: string
+        description: user ID
+
+  authentication:
     type: object
-    required: -name
-      -price
-      -description
-      -image
-      -quantity
+    required: -token
+      -user
     properties:
-      name:
+      token:
         type: string
-        description: product Name
-      price:
-        type: integer
-        description: product Price
-      description:
+        description: token
+      user:
+        type: object
+        description: user
+        $ref: "#/definitions/users"
+
+  articles:
+    type: object
+    required: -title
+      -content
+      -image
+      -createdAt
+      -createdBy
+    properties:
+      title:
         type: string
-        description: product Description
+        description: article title
+      content:
+        type: string
+        description: article content
       image:
         type: string
-        description: product Image
-      quantity:
-        type: integer
-        description: product Quantity
-  event:
-    type: object
-    required: -name
-      -date
-      -place
-      -Department
-    properties:
-      name:
-        type: string
-        description: event Name
-      date:
-        type: string
-        description: event Date
-      place:
-        type: string
-        description: event Place
-      Department:
-        type: string
-        description: event Department
-schemes:
-  - https
-  - http
+        description: article image
+      createdAt:
+        type: Date
+        description: article created at
+      createdBy:
+        type: object
+        description: article created by
+        $ref: "#/definitions/users"

@@ -14,16 +14,19 @@ import { dbConnection } from './database';
 import { Routes } from '@interfaces/routes.interface';
 import { ErrorMiddleware } from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
+import path from 'path';
 
 export class App {
   public app: express.Application;
   public env: string;
   public port: string | number;
+  public host: string;
 
   constructor(routes: Routes[]) {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
+    this.host = this.env === 'development' ? `http://localhost:${this.port}` : 'https://edward.com';
 
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
@@ -36,7 +39,7 @@ export class App {
     this.app.listen(this.port, () => {
       logger.info(`=================================`);
       logger.info(`======= ENV: ${this.env} ========`);
-      logger.info(`🚀 App listening on the port ${this.port}`);
+      logger.info(`🚀 App listening on ${this.host}`);
       logger.info(`=================================`);
     });
   }
@@ -70,16 +73,17 @@ export class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
+    this.app.use(express.static(path.join(__dirname, '../public')));
   }
 
   private initializeRoutes(routes: Routes[]) {
     logger.info(`🚀 Initializing routes`);
     const mappedAPI = [];
     routes.forEach(route => {
-      this.app.use('/', route.router);
+      this.app.use('/api', route.router);
       route.router.stack.map(stack =>
         mappedAPI.push({
-          path: stack.route.path,
+          path: `${this.host}/api${stack.route.path}`,
           method: Object.keys(stack.route.methods)[0].toUpperCase(),
         }),
       );
@@ -91,22 +95,19 @@ export class App {
     const options = {
       swaggerDefinition: {
         info: {
-          title: 'REST API',
+          title: 'Kabar API',
           version: '1.0.0',
           description: 'Edward',
         },
-      },
-      components: {
-        securitySchemes: {
+        securityDefinitions: {
           bearerAuth: {
-            type: 'http',
+            type: 'apiKey',
             scheme: 'bearer',
-            bareerFormat: 'JWT',
+            name: 'Authorization',
+            in: 'header',
           },
         },
-      },
-      security: {
-        bearerAuth: [],
+        basePath: '/api',
       },
       apis: ['swagger.yaml'],
     };
