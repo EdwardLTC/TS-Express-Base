@@ -1,4 +1,4 @@
-import { HttpException, HttpResponse } from '@/httpModals';
+import { HttpResponse } from '@/httpModals';
 import { Article } from '@/interfaces/articles';
 import { ArticleModel } from '@/models/articles';
 import { Service } from 'typedi';
@@ -15,7 +15,7 @@ export class ArticleService {
       });
       return new HttpResponse(articles);
     } catch (error) {
-      throw new HttpException({ statusCode: 500 });
+      throw error;
     }
   }
 
@@ -27,7 +27,7 @@ export class ArticleService {
       });
       return new HttpResponse([article]);
     } catch (error) {
-      throw new HttpException({ statusCode: 500 });
+      throw error;
     }
   }
 
@@ -36,7 +36,7 @@ export class ArticleService {
       const article = await this.article.create(articleData);
       return new HttpResponse(article);
     } catch (error) {
-      throw new HttpException({ statusCode: 500 });
+      throw error;
     }
   }
 
@@ -45,8 +45,7 @@ export class ArticleService {
       const updateArticle = await this.article.findByIdAndUpdate(id, articleData, { returnDocument: 'after', new: true });
       return new HttpResponse(updateArticle);
     } catch (error) {
-      console.log(error);
-      throw new HttpException({ statusCode: 500 });
+      throw error;
     }
   }
 
@@ -55,7 +54,7 @@ export class ArticleService {
       const deleteArticle = await this.article.findByIdAndDelete(id);
       return new HttpResponse(deleteArticle);
     } catch (error) {
-      throw new HttpException({ statusCode: 500 });
+      throw error;
     }
   }
 
@@ -64,7 +63,7 @@ export class ArticleService {
       const articles = await this.article.find({ createdBy: id }).sort({ createdAt: -1 }).skip(0);
       return new HttpResponse(articles);
     } catch (error) {
-      throw new HttpException({ statusCode: 500 });
+      throw error;
     }
   }
 }

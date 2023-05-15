@@ -1,4 +1,4 @@
-import { HttpException, HttpResponse } from '@/httpModals';
+import { HttpResponse } from '@/httpModals';
 import { MediaModel } from '@/models/media';
 import { Service } from 'typedi';
 
@@ -11,7 +11,7 @@ export class MediaService {
       const res = await this.mediaModel.create(media);
       return new HttpResponse(res);
     } catch (error) {
-      throw new HttpException({ statusCode: 500 });
+      throw error;
     }
   }
 }

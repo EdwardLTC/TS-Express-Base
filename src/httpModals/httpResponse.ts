@@ -1,4 +1,9 @@
 import { Options } from './httpOptions';
+
+/**
+ * @description This is the default list of keys that will be excluded from the response
+ * @description Add the keys that you want to exclude from the response
+ */
 const defaultExcludedItemsFromResponse = ['__v', 'password'];
 
 /**
@@ -37,15 +42,7 @@ export class HttpResponse {
   }
 
   filterData(data: any) {
-    if (Array.isArray(data)) {
-      data.map((x, index) => {
-        Object.keys(x).forEach(key => {
-          if (defaultExcludedItemsFromResponse.includes(key)) {
-            delete data[index][key];
-          }
-        });
-      });
-    } else if (typeof data === 'object') {
+    if (typeof data === 'object') {
       Object.keys(data).forEach(key => {
         if (typeof data[key] === 'object') {
           data[key] = this.filterData(data[key]);
@@ -53,6 +50,17 @@ export class HttpResponse {
         if (defaultExcludedItemsFromResponse.includes(key)) {
           delete data[key];
         }
+      });
+    } else if (Array.isArray(data)) {
+      data.map((x, index) => {
+        Object.keys(x).forEach(key => {
+          if (typeof x[key] === 'object') {
+            x[key] = this.filterData(x[key]);
+          }
+          if (defaultExcludedItemsFromResponse.includes(key)) {
+            delete data[index][key];
+          }
+        });
       });
     }
     return data;

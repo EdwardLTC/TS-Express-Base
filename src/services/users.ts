@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { HttpException, HttpResponse } from '@/httpModals';
+import { HttpResponse } from '@/httpModals';
 import { User } from '@/interfaces/users';
 import { UserModel } from '@/models/users';
 
@@ -12,7 +12,7 @@ export class UserService {
       const users: User[] = await this.userModel.find();
       return new HttpResponse(users);
     } catch (error) {
-      throw new HttpException({ statusCode: 500 });
+      throw error;
     }
   }
 
@@ -34,7 +34,7 @@ export class UserService {
       const createUserData: User = await this.userModel.create(data);
       return new HttpResponse(createUserData);
     } catch (error) {
-      throw new HttpException({ statusCode: 500 });
+      throw error;
     }
   }
 
@@ -44,7 +44,7 @@ export class UserService {
       return new HttpResponse(updateUserById);
     } catch (error) {
       console.log(error);
-      throw new HttpException({ statusCode: 500 });
+      throw error;
     }
   }
 }
