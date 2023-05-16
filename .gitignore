@@ -1,8 +1,6 @@
 # Logs
 logs
 *.log
-
-uploads
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -73,14 +71,13 @@ web_modules/
 
 # Yarn Integrity file
 .yarn-integrity
-yarn.lock
 
 # dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+# .env
+# .env.development.local
+# .env.test.local
+# .env.production.local
+# .env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

@@ -1,12 +1,4 @@
 tags:
-  - name: authentication
-    description: Authentication API
-  - name: users
-    description: Users API
-  - name: articles
-    description: Articles API
-  - name: media
-    description: Media API
 
 paths:
   #LOGIN
@@ -29,12 +21,12 @@ paths:
           schema:
             type: object
             required:
-              - email
+              - phone
               - password
             properties:
-              email:
+              phone:
                 type: string
-                description: user Email
+                description: user phone
               password:
                 type: string
                 description: user Password
@@ -45,8 +37,6 @@ paths:
             $ref: "#/definitions/authentication"
         "400":
           description: Bad Request
-        "401":
-          description: Unauthorized
         "404":
           description: Not Found
         "500":
@@ -75,31 +65,6 @@ paths:
           description: Internal Server Error
 
   /users:
-    # GET ALL USERS
-    get:
-      tags:
-        - users
-      summary: Get all users
-      security:
-        - bearerAuth: []
-      description: Get all users
-      operationId: getAllUsers
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      responses:
-        "200":
-          description: Get all users
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/users"
-        "401":
-          description: Unauthorized
-        "500":
-          description: Internal Server Error
-
     # REGISTER
     post:
       tags:
@@ -122,7 +87,7 @@ paths:
               - email
               - password
             properties:
-              email:
+              phone:
                 type: string
                 description: user Email
               password:
@@ -206,7 +171,272 @@ paths:
         "500":
           description: Internal Server Error
 
-  
+  #PRODUCTS
+  /products:
+    # GET LIST PRODUCTS
+    get:
+      tags:
+        - products
+      summary: Get products
+      security:
+        - bearerAuth: []
+      description: Get products
+      operationId: getProducts
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Get products
+          schema:
+            type: array
+            items:
+              type: object
+              $ref: "#/definitions/products"
+        "500":
+          description: Internal Server Error
+    #CREATE PRODUCT
+    post:
+      tags:
+        - products
+      summary: Create product
+      security:
+        - bearerAuth: []
+      description: Create product
+      operationId: createProduct
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Create product
+          required: true
+          schema:
+            type: object
+            required:
+              - name
+              - price
+              - img
+              - description
+            properties:
+              name:
+                type: string
+                description: product Name
+              price:
+                type: integer
+                description: product Price
+              img:
+                type: string
+                description: product Image
+              description:
+                type: string
+                description: product Description
+      responses:
+        "200":
+          description: Create product
+          schema:
+            $ref: "#/definitions/products"
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+
+  #BILL
+  /bills:
+    #create bill
+    post:
+      tags:
+        - bills
+      summary: Create bill
+      security:
+        - bearerAuth: []
+      description: Create bill
+      operationId: createBill
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Create bill
+          required: true
+          schema:
+            type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - product
+                    - quantity
+                  properties:
+                    product:
+                      type: string
+                      description: product ID
+                    quantity:
+                      type: integer
+                      description: product Quantity
+      responses:
+        "200":
+          description: Create bill
+          schema:
+            type: object
+            required:
+              - id
+              - items
+              - total
+              - status
+            properties:
+              id:
+                type: string
+                description: bill ID
+              items:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - productId
+                    - quantity
+                  properties:
+                    id:
+                      type: string
+                      description: product ID
+                    quantity:
+                      type: integer
+                      description: product Quantity
+              total:
+                type: integer
+                description: bill Total
+              status:
+                type: string
+                description: bill Status
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+        "400":
+          description: Bad Request
+
+    #GET MY LIST BILL
+    get:
+      tags:
+        - bills
+      summary: Get my list bill
+      security:
+        - bearerAuth: []
+      description: Get my list bill
+      operationId: getMyListBill
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Get my list bill
+          schema:
+            type: array
+            items:
+              type: object
+              required:
+                - id
+                - items
+                - total
+                - status
+              properties:
+                id:
+                  type: string
+                  description: bill ID
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - id
+                      - quantity
+                    properties:
+                      id:
+                        type: string
+                        description: product ID
+                      quantity:
+                        type: integer
+                        description: product Quantity
+                total:
+                  type: integer
+                  description: bill Total
+                status:
+                  type: string
+                  description: bill Status
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+
+    #GET BILL BY ID
+  /bills/{id}:
+    get:
+      tags:
+        - bills
+      summary: Get bill by id
+      security:
+        - bearerAuth: []
+      description: Get bill by id
+      operationId: getBillById
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: bill ID
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Get bill by id
+          schema:
+            type: object
+            required:
+              - id
+              - items
+              - total
+              - status
+            properties:
+              id:
+                type: string
+                description: bill ID
+              items:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - id
+                    - quantity
+                  properties:
+                    id:
+                      type: string
+                      description: product ID
+                    quantity:
+                      type: integer
+                      description: product Quantity
+              total:
+                type: integer
+                description: bill Total
+              status:
+                type: string
+                description: bill Status
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+
 definitions:
   users:
     type: object
@@ -218,18 +448,15 @@ definitions:
       -avatar
       -id
     properties:
-      email:
+      phone:
         type: string
-        description: user Email
+        description: user Phone number
       name:
         type: string
         description: user Name
       address:
         type: string
         description: user Address
-      phone:
-        type: string
-        description: user Phone number
       dob:
         type: string
         description: user Date of Birth
@@ -253,27 +480,26 @@ definitions:
         description: user
         $ref: "#/definitions/users"
 
-  articles:
+  products:
     type: object
-    required: -title
-      -content
+    required: -id
+      -name
+      -price
       -image
-      -createdAt
-      -createdBy
+      -description
     properties:
-      title:
+      id:
         type: string
-        description: article title
-      content:
+        description: product ID
+      name:
         type: string
-        description: article content
+        description: product Name
+      price:
+        type: integer
+        description: product Price
       image:
         type: string
-        description: article image
-      createdAt:
-        type: Date
-        description: article created at
-      createdBy:
-        type: object
-        description: article created by
-        $ref: "#/definitions/users"
+        description: product Image
+      description:
+        type: string
+        description: product Description

@@ -16,18 +16,17 @@ export class UserService {
     }
   }
 
-  public async findUserByEmail(email: string, includePassword: Boolean = false): Promise<User> {
-    return includePassword ? await this.userModel.findOne({ email: email }).select('+password') : await this.userModel.findOne({ email: email });
+  public async findUserByPhone(phone: string, includePassword: Boolean = false): Promise<User> {
+    return includePassword ? await this.userModel.findOne({ phone: phone }).select('+password') : await this.userModel.findOne({ phone: phone });
   }
 
   public async createUser(userData: User): Promise<HttpResponse> {
     try {
       const data = {
-        email: userData.email,
-        name: userData.name || '',
+        phone: userData.phone,
         password: userData.password,
+        name: userData.name || '',
         address: userData.address || '',
-        phone: userData.phone || '',
         dob: userData.dob || new Date(),
         avatar: userData.avatar || '',
       };
@@ -43,7 +42,6 @@ export class UserService {
       const updateUserById: User = await this.userModel.findByIdAndUpdate(userId, userData, { returnDocument: 'after' });
       return new HttpResponse(updateUserById);
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }

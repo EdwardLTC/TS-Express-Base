@@ -3,7 +3,7 @@ import { Model, Schema, model } from 'mongoose';
 
 export class MediaModel {
   private static instance: Model<Media>;
-  constructor() {
+  private initialize() {
     const MediaSchema: Schema = new Schema<Media>(
       {
         originalname: {
@@ -41,6 +41,7 @@ export class MediaModel {
 
   getInstance() {
     if (!MediaModel.instance) {
+      this.initialize();
       MediaModel.instance = model<Media>('media');
     }
     return MediaModel.instance;

@@ -1,12 +1,10 @@
-import { User } from '@/interfaces/users';
 import { Auth } from '@interfaces/auth';
 import { Model, Schema, model } from 'mongoose';
-import { JWT_SECRET, jwtExpirySeconds } from '@/config';
-import Jwt from 'jsonwebtoken';
+import { jwtExpirySeconds } from '@/config';
 export class AuthModel {
   private static instance: Model<Auth>;
-  constructor() {
-    const AuthSchema: Schema = new Schema<Auth>(
+  private initialize() {
+    const AuthSchema: Schema<Auth> = new Schema<Auth>(
       {
         token: {
           type: String,
@@ -31,32 +29,9 @@ export class AuthModel {
     } catch (error) {}
   }
 
-  public generateToken = (user: User) => {
-    const token = Jwt.sign(
-      {
-        _id: user._id.toString(),
-        email: user.email,
-        name: user.name,
-        address: user.address,
-        phone: user.phone,
-        avatar: user.avatar,
-      },
-      JWT_SECRET,
-      {
-        expiresIn: jwtExpirySeconds, // jwt expiry time in seconds (1 day)
-        algorithm: 'HS256',
-      },
-    );
-    return token;
-  };
-
-  public decodeToken = (token: string) => {
-    const decoded = Jwt.verify(token, JWT_SECRET);
-    return decoded;
-  };
-
-  getInstance() {
+  public getInstance() {
     if (!AuthModel.instance) {
+      this.initialize();
       AuthModel.instance = model<Auth>('Auth');
     }
     return AuthModel.instance;

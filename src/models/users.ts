@@ -1,12 +1,13 @@
 import { Model, model, Schema } from 'mongoose';
 import { User } from '@/interfaces/users';
-import { hash, compare } from 'bcrypt';
+import { hash } from 'bcrypt';
+import { USER_STATUS } from '@/utils/enumrator';
 export class UserModel {
   private static instance: Model<User>;
-  constructor() {
+  private initialize() {
     const UserSchema: Schema = new Schema<User>(
       {
-        email: {
+        phone: {
           type: String,
           required: true,
           unique: true,
@@ -16,15 +17,15 @@ export class UserModel {
           required: true,
           select: false,
         },
+        status: {
+          type: String,
+          default: USER_STATUS.ACTIVE,
+        },
         name: {
           type: String,
           required: false,
         },
         address: {
-          type: String,
-          required: false,
-        },
-        phone: {
           type: String,
           required: false,
         },
@@ -56,21 +57,15 @@ export class UserModel {
     } catch (error) {}
   }
 
-  // compare password
-  public comparePassword = (password: string, hash: string) => {
-    return new Promise((resolve, reject) => {
-      compare(password, hash, (err, isMatch) => {
-        if (err) return reject(err);
-        if (!isMatch) return reject(false);
-        resolve(true);
-      });
-    });
-  };
-
-  getInstance() {
+  public getInstance() {
     if (!UserModel.instance) {
+      this.initialize();
       UserModel.instance = model<User>('user');
     }
     return UserModel.instance;
+  }
+
+  public isUser(user: any): user is User {
+    return user && user.phone && user.password;
   }
 }

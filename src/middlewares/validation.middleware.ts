@@ -13,7 +13,7 @@ import { HttpException } from '@/httpModals';
  */
 export const ValidationMiddleware = (type: any, skipMissingProperties = false, whitelist = false, forbidNonWhitelisted = false) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const dto = plainToInstance(type, req.body);
+    const dto = plainToInstance(type, req.body, {});
     validateOrReject(dto, { skipMissingProperties, whitelist, forbidNonWhitelisted })
       .then(() => {
         req.body = dto;

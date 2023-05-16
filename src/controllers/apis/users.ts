@@ -1,13 +1,22 @@
 import { NextFunction, Response } from 'express';
 import { Container } from 'typedi';
 import { User } from '@/interfaces/users';
-import { UserService } from '@/services/users';
+import { UserService } from '@/services/apis/users';
 import { HttpResponse } from '@/httpModals/httpResponse';
-import { BaseRequest } from '@/interfaces/baseRequest';
+import { BaseRequest } from '@/interfaces/base/baseRequest.interface';
 import { hash } from 'bcrypt';
 import { HttpException } from '@/httpModals';
 
 export class UserController {
+  //singleton
+  private static instance: UserController;
+  public getInstance(): UserController {
+    if (!UserController.instance) {
+      UserController.instance = new UserController();
+    }
+    return UserController.instance;
+  }
+
   public user = Container.get(UserService);
 
   public getUsers = async (req: BaseRequest, res: Response, next: NextFunction) => {
@@ -22,9 +31,6 @@ export class UserController {
   public createUser = async (req: BaseRequest, res: Response, next: NextFunction) => {
     try {
       const userData: User = req.body;
-      if (!userData) {
-        next(new HttpException({ statusCode: 400, message: 'No user found in request body' }));
-      }
       const createUserData: HttpResponse = await this.user.createUser(userData);
       res.status(createUserData.statusCode).json(createUserData);
     } catch (error) {
@@ -35,13 +41,7 @@ export class UserController {
   public updateUser = async (req: BaseRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user._id.toString();
-      if (!userId) {
-        next(new HttpException({ statusCode: 401, message: 'Missing token' }));
-      }
       const userData: User = req.body;
-      if (!userData) {
-        next(new HttpException({ statusCode: 400, message: 'No user found in request body' }));
-      }
       const updateUserData: HttpResponse = await this.user.updateUser(userId, userData);
       res.status(updateUserData.statusCode).json(updateUserData);
     } catch (error) {
