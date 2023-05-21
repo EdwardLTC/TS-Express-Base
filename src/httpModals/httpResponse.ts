@@ -42,25 +42,22 @@ export class HttpResponse {
   }
 
   filterData(data: any) {
-    if (typeof data === 'object') {
-      Object.keys(data).forEach(key => {
-        if (typeof data[key] === 'object') {
-          data[key] = this.filterData(data[key]);
-        }
-        if (defaultExcludedItemsFromResponse.includes(key)) {
-          delete data[key];
-        }
-      });
-    } else if (Array.isArray(data)) {
+    if (Array.isArray(data)) {
       data.map((x, index) => {
         Object.keys(x).forEach(key => {
-          if (typeof x[key] === 'object') {
-            x[key] = this.filterData(x[key]);
-          }
           if (defaultExcludedItemsFromResponse.includes(key)) {
             delete data[index][key];
           }
         });
+      });
+    } else if (typeof data === 'object') {
+      Object.keys(data).forEach(key => {
+        if (Array.isArray(data[key])) {
+          this.filterData(data[key]);
+        }
+        if (defaultExcludedItemsFromResponse.includes(key)) {
+          delete data[key];
+        }
       });
     }
     return data;
